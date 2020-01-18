@@ -1,0 +1,54 @@
+<html>
+  <head>
+    <style type='text/css'>
+      a            { color:#a0a0e0 }
+      div.title    { 
+          color:#000000; 
+          font-size:1.2em; 
+          font-weight:bold; 
+          margin-top:1em; 
+          margin-bottom:0.5em; 
+          text-align:center }
+      div.subtitle { 
+          color:#0000ff; 
+          font-size:0.8em; 
+          margin-bottom:1em; 
+          text-align:center }
+      div.freetext { color:#14145b }
+      div.list     { color:#14145b }
+    </style>
+  </head>
+  <body>
+
+$ 3.0
+  % Version 3.0
+  _ 2015-12-24
+ ! What's New: <b></b>
+	* Added Sync feature with Google Drive
+	* Fix multiple pop up from network
+
+$ 2.1
+  % Version 2.1
+  _ 2013-12-19
+ ! What's New: <b></b>
+	* Bug fixed for error when no access point around
+	* Added removal of access point
+
+$ 2.0
+  % Version 2.0
+  _ 2013-12-09
+ ! What's New: <b></b>
+	* Redesigned to alert you when unknown access points connect
+	* App will notify you when you connect to access points that are unknown
+	* List view created to see know access points. (to try turn wifi off and on)
+	* Added change log
+	
+$ 1.0
+  % Version 1.0
+  _ 2012-07-16
+  ! Public Release! <b></b> 
+ 	*Release Version!
+ 	
+$ END_OF_CHANGE_LOG
+  </body>
+</html>
