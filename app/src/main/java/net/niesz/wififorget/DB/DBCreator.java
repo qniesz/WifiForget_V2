@@ -18,7 +18,7 @@ public class DBCreator extends SQLiteOpenHelper{
 	
 	
 	//private static final String DATABASE_PATH="/data/data/net.niesz.periodjournaltracker/databases/";
-	
+
 	
 	private static final String DATABASE_NAME= "wifi_forget";
 	private static final int 	SCHEMA_VERSION = 1;
@@ -108,7 +108,7 @@ public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion){
 				db.close();
 			}
 					
-			return db !=null ? true:false;
+			return db != null;
 			
 			
 		}

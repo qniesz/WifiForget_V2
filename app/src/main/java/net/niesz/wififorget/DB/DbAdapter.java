@@ -74,7 +74,7 @@ public class DbAdapter {
 };
 
 	public DbAdapter(Context ctx) {
-		this.mCtx = ctx;
+		mCtx = ctx;
 	}
 
 	public DbAdapter open() throws SQLException {
