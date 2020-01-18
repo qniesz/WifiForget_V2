@@ -65,6 +65,7 @@ GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
                 && BSSID != null && SSID != null && ComingFrom != null) {
 
 
+            
           //  StartAlert();
         }
 
