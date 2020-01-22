@@ -345,7 +345,7 @@ public class MainActivity extends ListActivity {
 
                 // Log.i("view", dtNOW.toString("MM-dd-yyyy HH:mm:ss"));
 
-               
+
 
 
                 //ConnectSync();
