@@ -7,7 +7,6 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.wifi.WifiInfo;
@@ -23,38 +22,21 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.cursoradapter.widget.SimpleCursorAdapter;
-
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.drive.Drive;
-import com.google.android.gms.drive.DriveApi;
-import com.google.android.gms.drive.query.Filters;
-import com.google.android.gms.drive.query.Query;
-import com.google.android.gms.drive.query.SearchableField;
-import com.google.android.gms.plus.Plus;
 
 import net.niesz.wififorget.DB.DBCreator;
 import net.niesz.wififorget.DB.DbAdapter;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Calendar;
 
-public class MainActivity extends ListActivity implements
-
-GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class MainActivity extends ListActivity {
     private static final int FIRST = Menu.FIRST;
     private static String BSSID, SSID, ComingFrom = null;
     private static int iNetId;
     // private AdView mAdView;
-    private static GoogleApiClient mGoogleApiClient;
+
     SimpleCursorAdapter adapter;
     // protected static final int REQUEST_CODE_RESOLUTION = 1;
     // private static final String TAG = "BaseDriveActivity";
@@ -103,7 +85,7 @@ GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener 
 
     //
     private void CheckifSDfolderExist() {
-        // TODO Auto-generated method stub
+
         File exportDir = SD_DB_SAVE_FOLDER_LOCATION;
 
         if (!exportDir.exists()) {
@@ -122,84 +104,16 @@ GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener 
                 .getDefaultSharedPreferences(getBaseContext());
         // Log.i("view", dtNOW.toString("MM-dd-yyyy HH:mm:ss"));
 
-        String SyncOn = sp.getString("sync", "false");
 
-        //Log.i("view", "SyncOn " + SyncOn);
-        if ("true".equals(SyncOn)) {
-
-
-            mGoogleApiClient = new GoogleApiClient.Builder(this)
-                    .addApi(Drive.API).addScope(Drive.SCOPE_FILE)
-                    .addApi(Plus.API)
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this).build();
-
-
-            //comingFrom = "Restore";
-            //ConnectSync();
-
-        } else {
-        }
-
-
-    }
-
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        switch (comingFrom) {
-
-            case "Restore":
-                //Log.i("view", "Restore");
-
-                comingFrom = "";
-                break;
-
-            case "Save":
-                //Log.i("view", "Save");
-                saveFiletoDrive();
-                comingFrom = "";
-                break;
-            case "Disconnect":
-                //Log.i("view", "Disconnect");
-                Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
-                mGoogleApiClient.disconnect();
-                comingFrom = "";
-                break;
-            case "Change":
-                Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
-                mGoogleApiClient.disconnect();
-                mGoogleApiClient.connect();
-
-                comingFrom = "";
-                break;
-            default:
-                //Log.i("view", "Case Default");
-                comingFrom = "";
 
 
         }
-    }
 
-    @Override
-    public void onConnectionSuspended(int i) {
 
-    }
 
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult result) {
-//Log.i(TAG, "GoogleApiClient connection failed: " + result.toString());
-        if (!result.hasResolution()) {
-            // show the localized error dialog.
-            GooglePlayServicesUtil.getErrorDialog(result.getErrorCode(), this,
-                    0).show();
-            return;
-        }
-        try {
-            result.startResolutionForResult(this, REQUEST_CODE_RESOLUTION);
-        } catch (IntentSender.SendIntentException e) {
-            //Log.e(TAG, "Exception while starting resolution activity", e);
-        }
-    }
+
+
+
 
 
     // //////////////////////////////////////////////////
@@ -363,23 +277,9 @@ GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener 
                                 DbAdapter.deleteRow(info.id);
                                 mDbHelper.close();
 
-                                SharedPreferences sp = PreferenceManager
-                                        .getDefaultSharedPreferences(getBaseContext());
-                                // Log.i("view", dtNOW.toString("MM-dd-yyyy HH:mm:ss"));
-
-                                String SyncOn = sp.getString("sync", "false");
-
-                                if ("true".equals(SyncOn)) {
-                                    fillData();
-                                    if (mGoogleApiClient.isConnected()) {
 
 
-                                        saveFiletoDrive();
-                                    } else {
-                                        comingFrom = "Save";
-                                        mGoogleApiClient.connect();
-                                    }
-                                }
+
                                 break;
 
                             case DialogInterface.BUTTON_NEGATIVE:
@@ -405,126 +305,8 @@ GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener 
 
 
 
-    private void saveFiletoDrive() {
-        // TODO Auto-generated method stub
-        //Log.i("view", "SaveFileToDrive");
-        if (mGoogleApiClient.isConnected()) {
-            // Log.i("view", "isConnected");
-            //deleteOldVersion();
-        }
-
-        SharedPreferences sp = PreferenceManager
-                .getDefaultSharedPreferences(getBaseContext());
-        //Log.i("view", "sp Drive ID: "+sp.getString("driveFileID", ""));
-
-        final File file = new File(SD_DB_SAVE_FILE_LOCATION);
-        final String mime = "application/zip";
-        // Log.i("view", "internal db location: "+
-        //Create File locally for upload
-        if (net.niesz.wififorget.Drive.S_Backup_Restore.SdIsPresent()) {// Check
-            // if
-            // SD_Card
-            // present
-            ArrayList<String> arrayList = new ArrayList<String>();
-
-            File dir = new File(
-                    net.niesz.wififorget.Drive.S_Backup_Restore.DATABASE_INTERNAL_DIRECTORY);
-            if (dir.listFiles() != null) {
-                for (File child : dir.listFiles()) {
-                    //Log.i("view", child.toString());
-                    arrayList.add(child.toString());
-                }
-
-                String saveto = SD_DB_SAVE_FILE_LOCATION;
-                // Log.i("view", saveto);
-
-                try {
-                    net.niesz.wififorget.Drive.S_Backup_Restore.zip(this,
-                            arrayList, saveto, "5", "Local");
-                    // Toast.makeText(this, R.string.sdSuccess,
-                    // Toast.LENGTH_SHORT).show();
-                } catch (IOException e) {
-                    // Toast.makeText(this, R.string.sdFailure,
-                    // Toast.LENGTH_SHORT).show();
-                    e.printStackTrace();
-                }
-            }
-        }
-        //Log.i("view", sp.getString("driveFileID", ""));
-        saveNew(file, mime);
-        // overright(sp.getString("driveFileID", ""),file);
-
-        // saveNew(file,mime);
-        /*
-         * if (!"".equals(sp.getString("driveFileID", ""))){ Log.i("view",
-         * "OverRight"); overright(sp.getString("driveFileID", ""),file); }else{
-         * Log.i("view", "NewSave");
-         *
-         * saveNew(file,mime); }
-         */
-    }
-    private void saveNew(final File file, final String mime) {
-        //Log.i("view","SaveNew");
-        // Start by creating a new contents, and setting a callback.
-
-        Query query = new Query.Builder().addFilter(
-                Filters.eq(SearchableField.TITLE, "BackupDB.zip")).build();
 
 
-    }
-
-
-
-    private void deleteOldVersion() {
-        //Log.i("view","deleteOldVersion");
-        // TODO Auto-generated method stub
-
-        Query query = new Query.Builder().addFilter(
-                Filters.eq(SearchableField.TITLE, "BackupDB.zip")).build();
-
-        Drive.DriveApi.query(mGoogleApiClient, query).setResultCallback( new
-                                                                                 ResultCallback<DriveApi.MetadataBufferResult>() {
-
-                                                                                     @Override public void onResult(DriveApi.MetadataBufferResult result) {
-                                                                                         //Log.i("view","Count: "+ result.getMetadataBuffer().getCount());
-
-
-
-
-
-                                                                                         if (result.getMetadataBuffer().getCount() >= 1) {
-
-                                                                                            // DriveFile driveFile = Drive.DriveApi.getFile(mGoogleApiClient,
-                                                                                            //         DriveId.decodeFromString(result.getMetadataBuffer().get(0).getDriveId().toString()));
-                                                                                             // Call to delete file.
-
-                                                                                             //driveFile.trash(mGoogleApiClient);
-                                                                                           //  driveFile.delete(mGoogleApiClient);
-                                                                                             //result.getMetadataBuffer().get(0). DriveFile driveFile =
-                                                                                             //Drive.DriveApi.getFile(mGoogleApiClient,
-                                                                                             //result.getMetadataBuffer().get(0).getDriveId().); DriveFile driveFile;
-
-                                                                                             //Drive.DriveApi.
-
-
-	  /*
-	   DriveFile driveFile = Drive.DriveApi.getFile(mGoogleApiClient,
-		        DriveId.decodeFromString(result.getMetadataBuffer().get(0).getDriveId().toString()));
-		// Call to delete file.
-	   Log.i("view","test");
-	   //driveFile.trash(mGoogleApiClient);
-	   driveFile.delete(mGoogleApiClient);
-	//			  ResultCallback<deleteCallback>() {
-
-
-	   */
-
-
-                                                                                         }
-
-                                                                                     } });
-
-    }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
@@ -580,7 +362,7 @@ GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener 
                 // setalarm(getBaseContext());
                 comingFrom= "Disconnect";
                 // deleteOldVersion();
-                mGoogleApiClient.reconnect();
+
 
                 // Log.i("view", String.valueOf(mGoogleApiClient.isConnected()));
 			/*
@@ -606,7 +388,7 @@ GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener 
             case CHANGE_ID:
                 comingFrom= "Change";
 
-                mGoogleApiClient.reconnect();
+
 
                 //Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
                 //mGoogleApiClient.disconnect();
@@ -630,16 +412,10 @@ GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener 
 		.addOnConnectionFailedListener(this).build();
 */
         //Log.i("view", "is Sync Connected: "+mGoogleApiClient.isConnected());
-        if (mGoogleApiClient != null) {
-            if (mGoogleApiClient.isConnected()) {
-                mGoogleApiClient.reconnect();
 
-            } else {
-                mGoogleApiClient.connect();
-            }
 
         }
-    }
+
 
     public static void setalarm(Context context) {
         // Log.i("view", "setalarm callaed");
@@ -684,7 +460,7 @@ GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener 
             // TODO Auto-generated method stub
             // TODO Auto-generated method stub
             //Log.i("view","doInBackground");
-            ConnectSync();
+
 
         }
 
