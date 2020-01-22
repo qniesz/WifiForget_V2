@@ -11,7 +11,6 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
@@ -28,8 +27,6 @@ import net.niesz.wififorget.DB.DBCreator;
 import net.niesz.wififorget.DB.DbAdapter;
 
 import java.io.File;
-import java.net.URL;
-import java.util.Calendar;
 
 public class MainActivity extends ListActivity {
     private static final int FIRST = Menu.FIRST;
@@ -348,7 +345,7 @@ public class MainActivity extends ListActivity {
 
                 // Log.i("view", dtNOW.toString("MM-dd-yyyy HH:mm:ss"));
 
-                new A_Google_Drive().execute("",1,1);
+               
 
 
                 //ConnectSync();
@@ -401,72 +398,9 @@ public class MainActivity extends ListActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void ConnectSync() {
-
-        //Log.i("view", "ConnectSync");
-		/*
-		mGoogleApiClient = new GoogleApiClient.Builder(this)
-		.addApi(Drive.API).addScope(Drive.SCOPE_FILE)
-		.addApi(Plus.API)
-		.addConnectionCallbacks(this)
-		.addOnConnectionFailedListener(this).build();
-*/
-        //Log.i("view", "is Sync Connected: "+mGoogleApiClient.isConnected());
-
-
-        }
-
-
-    public static void setalarm(Context context) {
-        // Log.i("view", "setalarm callaed");
-
-        // Log.i("view","alarm ON");
-        Calendar calendar = Calendar.getInstance();
-
-        // 12:59:59 PM
-        calendar.set(Calendar.HOUR_OF_DAY, 23);
-        calendar.set(Calendar.MINUTE, 59);
-        calendar.set(Calendar.SECOND, 59);
-
-        // long settime = calendar.getTimeInMillis();
-        //Log.i("view", String.valueOf(calendar.get(Calendar.HOUR_OF_DAY)));
-        // Log.i("view",String.valueOf(arg1));
-
-        //Intent i9 = new Intent(context, Bcr_WifiReceiver.class);
-        //PendingIntent pi = PendingIntent.getBroadcast(context, 0, i9,
-         //       PendingIntent.FLAG_CANCEL_CURRENT);
-
-       // AlarmManager am = (AlarmManager) context
-       //         .getSystemService(context.ALARM_SERVICE);
-        // am.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+ 5000,
-        // pi);
-      //  am.setRepeating(AlarmManager.RTC_WAKEUP,
-      //          calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pi);
-
-    }
-
-
-    private class A_Google_Drive extends AsyncTask<URL, Integer, Long> {
-
-        @Override
-        protected Long doInBackground(URL... params) {
 
 
 
-            return null;
-        }
-
-        public void execute(String string, int i, int j) {
-            // TODO Auto-generated method stub
-            // TODO Auto-generated method stub
-            //Log.i("view","doInBackground");
-
-
-        }
-
-
-
-    }
 
 
 
